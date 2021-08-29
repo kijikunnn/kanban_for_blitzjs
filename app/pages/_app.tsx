@@ -1,36 +1,9 @@
-import {
-  AppProps,
-  ErrorBoundary,
-  ErrorComponent,
-  AuthorizationError,
-  ErrorFallbackProps,
-  useQueryErrorResetBoundary,
-} from "blitz"
+import { AppProps } from "blitz"
 
-export default function App({ Component, pageProps }: AppProps) {
-  const getLayout = Component.getLayout || ((page) => page)
+const App = (props: AppProps) => {
+  const getLayout = props.Component.getLayout || ((page) => page)
 
-  return (
-    <ErrorBoundary
-      FallbackComponent={RootErrorFallback}
-      onReset={useQueryErrorResetBoundary().reset}
-    >
-      {getLayout(<Component {...pageProps} />)}
-    </ErrorBoundary>
-  )
+  return getLayout(<props.Component {...props.pageProps} />)
 }
 
-function RootErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps) {
-  if (error instanceof AuthorizationError) {
-    return (
-      <ErrorComponent
-        statusCode={error.statusCode}
-        title="Sorry, you are not authorized to access this"
-      />
-    )
-  } else {
-    return (
-      <ErrorComponent statusCode={error.statusCode || 400} title={error.message || error.name} />
-    )
-  }
-}
+export default App
