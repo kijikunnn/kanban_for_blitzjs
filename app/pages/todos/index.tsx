@@ -23,7 +23,7 @@ export const TodosList = () => {
         {todos.map((todo) => (
           <li key={todo.id}>
             <Link href={Routes.ShowTodoPage({ todoId: todo.id })}>
-              <a>{todo.name}</a>
+              <a>{todo.title}</a>
             </Link>
           </li>
         ))}
