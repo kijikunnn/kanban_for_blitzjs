@@ -1,31 +1,12 @@
 import { Suspense } from "react"
 import { Image, Link, BlitzPage, useMutation, Routes } from "blitz"
 import Layout from "app/core/layouts/Layout"
-import { useCurrentUser } from "app/core/hooks/useCurrentUser"
 import logo from "public/logo.png"
 
 /*
  * This file is just for a pleasant getting started page for your new app.
  * You can delete everything in here and start from scratch if you like.
  */
-
-const UserInfo = () => {
-  const currentUser = useCurrentUser()
-
-  if (currentUser) {
-    return (
-      <>
-        <div>
-          User id: <code>{currentUser.id}</code>
-          <br />
-          User role: <code>{currentUser.role}</code>
-        </div>
-      </>
-    )
-  } else {
-    return <>hello</>
-  }
-}
 
 const Home: BlitzPage = () => {
   return (
@@ -37,11 +18,7 @@ const Home: BlitzPage = () => {
         <p>
           <strong>Congrats!</strong> Your app is ready, including user sign-up and log-in.
         </p>
-        <div className="buttons" style={{ marginTop: "1rem", marginBottom: "1rem" }}>
-          <Suspense fallback="Loading...">
-            <UserInfo />
-          </Suspense>
-        </div>
+
         <p>
           <strong>
             To add a new model to your app, <br />
