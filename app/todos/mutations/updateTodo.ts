@@ -7,13 +7,8 @@ const UpdateTodo = z.object({
   title: z.string(),
 })
 
-export default resolver.pipe(
-  resolver.zod(UpdateTodo),
-  resolver.authorize(),
-  async ({ id, ...data }) => {
-    // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-    const todo = await db.todo.update({ where: { id }, data })
+export default resolver.pipe(resolver.zod(UpdateTodo), async ({ id, ...data }) => {
+  const todo = await db.todo.update({ where: { id }, data })
 
-    return todo
-  }
-)
+  return todo
+})
