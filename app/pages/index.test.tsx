@@ -1,8 +1,5 @@
 import { render } from "test/utils"
-
 import Home from "./index"
-
-jest.mock("app/core/hooks/useCurrentUser")
 
 test.skip("renders blitz documentation link", () => {
   // This is an example of how to ensure a specific item is in the document
@@ -12,6 +9,5 @@ test.skip("renders blitz documentation link", () => {
   // This is an example on how to mock api hooks when testing
 
   const { getByText } = render(<Home />)
-  const linkElement = getByText(/Documentation/i)
-  expect(linkElement).toBeInTheDocument()
+  expect(getByText("Congrats")).toBeInTheDocument()
 })
