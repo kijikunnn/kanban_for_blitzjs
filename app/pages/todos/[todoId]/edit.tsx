@@ -62,7 +62,7 @@ const EditTodoPage: BlitzPage = () => {
       <Suspense fallback={<div>Loading...</div>}>{/* <EditTodo /> */}</Suspense>
 
       <p>
-        <Link href={Routes.TodosPage()}>
+        <Link href={"/"}>
           <a>Todos</a>
         </Link>
       </p>
