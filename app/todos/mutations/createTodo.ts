@@ -3,7 +3,7 @@ import db from "db"
 import { z } from "zod"
 
 const CreateTodo = z.object({
-  name: z.string(),
+  title: z.string(),
 })
 
 export default resolver.pipe(resolver.zod(CreateTodo), resolver.authorize(), async (input) => {
