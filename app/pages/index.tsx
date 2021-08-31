@@ -1,8 +1,54 @@
-import { Image, BlitzPage, useMutation, useRouter } from "blitz"
+import { Image, BlitzPage, useMutation, useRouter, useQuery } from "blitz"
 import Layout from "app/core/layouts/Layout"
 import logo from "public/logo.png"
 import { FORM_ERROR, TodoForm } from "app/todos/components/TodoForm"
 import createTodo from "app/todos/mutations/createTodo"
+import getTodos from "app/todos/queries/getTodos"
+import { Suspense, VFC } from "react"
+import updateTodo from "app/todos/mutations/updateTodo"
+import deleteTodo from "app/todos/mutations/deleteTodo"
+
+const Todo: VFC = () => {
+  const [{ todos }, { refetch }] = useQuery(getTodos, { orderBy: { id: "asc" } })
+  const [updateTodoMutation] = useMutation(updateTodo)
+  const [deleteTodoMutation] = useMutation(deleteTodo)
+
+  return (
+    <ul>
+      {todos.map((todo) => (
+        <li key={todo.id}>
+          <p>{todo.title}</p>
+          <TodoForm
+            submitText="Update Todo"
+            initialValues={todo}
+            onSubmit={async (values) => {
+              try {
+                await updateTodoMutation(values)
+                refetch()
+              } catch (error) {
+                console.error(error)
+                return {
+                  [FORM_ERROR]: error.toString(),
+                }
+              }
+            }}
+          />
+          <button
+            type="button"
+            onClick={async () => {
+              if (window.confirm("This will be deleted")) {
+                await deleteTodoMutation({ id: todo.id })
+                refetch()
+              }
+            }}
+          >
+            Delete
+          </button>
+        </li>
+      ))}
+    </ul>
+  )
+}
 
 const Home: BlitzPage = () => {
   const router = useRouter()
@@ -15,8 +61,12 @@ const Home: BlitzPage = () => {
           <Image src={logo} alt="blitzjs" />
         </div>
         <p>
-          <strong>Congrats!</strong> Your app is ready, including user sign-up and log-in.
+          <strong>Congrats!</strong>
         </p>
+
+        <Suspense fallback={<div>Loading...</div>}>
+          <Todo />
+        </Suspense>
 
         <TodoForm
           submitText="Create Todo"
