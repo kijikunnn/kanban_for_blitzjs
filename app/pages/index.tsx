@@ -10,50 +10,64 @@ import deleteTodo from "app/todos/mutations/deleteTodo"
 
 const Todo: VFC = () => {
   const [{ todos }, { refetch }] = useQuery(getTodos, { orderBy: { id: "asc" } })
+  const [createTodoMutation] = useMutation(createTodo)
   const [updateTodoMutation] = useMutation(updateTodo)
   const [deleteTodoMutation] = useMutation(deleteTodo)
 
   return (
-    <ul>
-      {todos.map((todo) => (
-        <li key={todo.id}>
-          <p>{todo.title}</p>
-          <TodoForm
-            submitText="Update Todo"
-            initialValues={todo}
-            onSubmit={async (values) => {
-              try {
-                await updateTodoMutation(values)
-                refetch()
-              } catch (error) {
-                console.error(error)
-                return {
-                  [FORM_ERROR]: error.toString(),
+    <div>
+      <TodoForm
+        submitText="Create Todo"
+        onSubmit={async (values) => {
+          try {
+            const todo = await createTodoMutation(values)
+            refetch()
+          } catch (error) {
+            console.error(error)
+            return {
+              [FORM_ERROR]: error.toString(),
+            }
+          }
+        }}
+      />
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>
+            <p>{todo.title}</p>
+            <TodoForm
+              submitText="Update Todo"
+              initialValues={todo}
+              onSubmit={async (values) => {
+                try {
+                  await updateTodoMutation(values)
+                  refetch()
+                } catch (error) {
+                  console.error(error)
+                  return {
+                    [FORM_ERROR]: error.toString(),
+                  }
                 }
-              }
-            }}
-          />
-          <button
-            type="button"
-            onClick={async () => {
-              if (window.confirm("This will be deleted")) {
-                await deleteTodoMutation({ id: todo.id })
-                refetch()
-              }
-            }}
-          >
-            Delete
-          </button>
-        </li>
-      ))}
-    </ul>
+              }}
+            />
+            <button
+              type="button"
+              onClick={async () => {
+                if (window.confirm("This will be deleted")) {
+                  await deleteTodoMutation({ id: todo.id })
+                  refetch()
+                }
+              }}
+            >
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
 
 const Home: BlitzPage = () => {
-  const router = useRouter()
-  const [createTodoMutation] = useMutation(createTodo)
-
   return (
     <div className="container">
       <main>
@@ -67,21 +81,6 @@ const Home: BlitzPage = () => {
         <Suspense fallback={<div>Loading...</div>}>
           <Todo />
         </Suspense>
-
-        <TodoForm
-          submitText="Create Todo"
-          onSubmit={async (values) => {
-            try {
-              const todo = await createTodoMutation(values)
-              router.push("/")
-            } catch (error) {
-              console.error(error)
-              return {
-                [FORM_ERROR]: error.toString(),
-              }
-            }
-          }}
-        />
       </main>
 
       <style jsx global>{`
