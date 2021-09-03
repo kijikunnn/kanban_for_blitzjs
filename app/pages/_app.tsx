@@ -1,3 +1,4 @@
+import "tailwindcss/tailwind.css"
 import { AppProps } from "blitz"
 
 const App = (props: AppProps) => {
