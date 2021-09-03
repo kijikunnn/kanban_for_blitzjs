@@ -14,7 +14,10 @@ const Layout = ({ title, children }: LayoutProps) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {children}
+      <div className="bg-bgMain ">
+        <header className="w-full h-20 border-b-4 border-borderMain">header and icon</header>
+        <main className=" flex justify-around ">{children}</main>
+      </div>
     </>
   )
 }
