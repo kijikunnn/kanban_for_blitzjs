@@ -4,15 +4,13 @@ import { useField } from "react-final-form"
 export interface LabeledTextFieldProps extends PropsWithoutRef<JSX.IntrinsicElements["input"]> {
   /** Field name. */
   name: string
-  /** Field label. */
-  label: string
+
   /** Field type. Doesn't include radio buttons and checkboxes */
-  type?: "text" | "password" | "email" | "number"
-  outerProps?: PropsWithoutRef<JSX.IntrinsicElements["div"]>
+  type?: "text" | "number"
 }
 
 export const LabeledTextField = forwardRef<HTMLInputElement, LabeledTextFieldProps>(
-  ({ name, label, outerProps, ...props }, ref) => {
+  ({ name, ...props }, ref) => {
     const {
       input,
       meta: { touched, error, submitError, submitting },
@@ -22,35 +20,26 @@ export const LabeledTextField = forwardRef<HTMLInputElement, LabeledTextFieldPro
 
     const normalizedError = Array.isArray(error) ? error.join(", ") : error || submitError
 
+    console.log(props)
+
     return (
-      <div {...outerProps}>
-        <label>
-          {label}
-          <input {...input} disabled={submitting} {...props} ref={ref} />
-        </label>
+      <div>
+        <div className="w-full bg-bgMain h-14 rounded-lg flex items-center">
+          <input
+            className=" mx-5 pl-3  border-b border-borderMain text-2xl  font-bold focus:outline-none"
+            autoFocus={true}
+            {...input}
+            disabled={submitting}
+            {...props}
+            ref={ref}
+          />
+        </div>
 
         {touched && normalizedError && (
           <div role="alert" style={{ color: "red" }}>
             {normalizedError}
           </div>
         )}
-
-        <style jsx>{`
-          label {
-            display: flex;
-            flex-direction: column;
-            align-items: start;
-            font-size: 1rem;
-          }
-          input {
-            font-size: 1rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 3px;
-            border: 1px solid purple;
-            appearance: none;
-            margin-top: 0.5rem;
-          }
-        `}</style>
       </div>
     )
   }
