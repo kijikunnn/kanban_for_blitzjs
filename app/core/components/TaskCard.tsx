@@ -16,27 +16,29 @@ const CreateTodo: VFC = () => {
 
   if (isType) {
     return (
-      <TodoForm
-        onBlur={() => setIsType(false)}
-        placeholder={"New Task"}
-        onSubmit={async (values) => {
-          try {
-            await createTodoMutation(values)
-            setIsType(false)
-            refetch()
-          } catch (error) {
-            console.error(error)
-            return {
-              [FORM_ERROR]: error.toString(),
+      <div className="mb-5">
+        <TodoForm
+          onBlur={() => setIsType(false)}
+          placeholder={"New Task"}
+          onSubmit={async (values) => {
+            try {
+              await createTodoMutation(values)
+              setIsType(false)
+              refetch()
+            } catch (error) {
+              console.error(error)
+              return {
+                [FORM_ERROR]: error.toString(),
+              }
             }
-          }
-        }}
-      />
+          }}
+        />
+      </div>
     )
   } else {
     return (
       <button
-        className="w-full bg-bgMain h-14 rounded-lg text-2xl text-theme font-bold"
+        className="mb-5 w-full bg-bgMain h-14 rounded-lg text-2xl text-theme font-bold"
         onClick={() => setIsType(true)}
       >
         &#65291; Add Task

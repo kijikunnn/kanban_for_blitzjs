@@ -24,9 +24,9 @@ export const LabeledTextField = forwardRef<HTMLInputElement, LabeledTextFieldPro
 
     return (
       <div>
-        <div className="w-full bg-bgMain h-14 rounded-lg flex items-center">
+        <div className=" w-full bg-bgMain h-14 rounded-lg flex items-center">
           <input
-            className=" mx-5 pl-3  border-b border-borderMain text-2xl  font-bold focus:outline-none"
+            className=" mx-5  pl-3  border-b border-borderMain text-2xl  font-bold focus:outline-none"
             autoFocus={true}
             {...input}
             disabled={submitting}
