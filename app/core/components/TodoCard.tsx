@@ -12,26 +12,46 @@ export const TodoCard: VFC = () => {
   const [updateTodoMutation] = useMutation(updateTodo)
   const [deleteTodoMutation] = useMutation(deleteTodo)
 
+  console.log(todos)
+
+  const editDate = (date) => {
+    const y = date.getFullYear()
+    const m = date.getMonth()
+    const d = date.getDate()
+
+    return `${y}/${m}/${d}`
+  }
+
   return (
-    <ul>
+    <ul className="w-[400px]">
       {todos.map((todo) => (
         <li key={todo.id}>
-          <div>
-            <TodoForm
-              initialValues={todo}
-              onSubmit={async (values) => {
-                try {
-                  await updateTodoMutation(values)
-                  refetch()
-                } catch (error) {
-                  console.error(error)
-                  return {
-                    [FORM_ERROR]: error.toString(),
-                  }
-                }
-              }}
-            />
-            <MenuIcon />
+          <div className="h-36 p-5 w-full bg-bgMain rounded-lg flex flex-col">
+            <div className="flex items-center justify-between">
+              {isEdit ? (
+                <TodoForm
+                  initialValues={todo}
+                  onSubmit={async (values) => {
+                    try {
+                      await updateTodoMutation(values)
+                      refetch()
+                    } catch (error) {
+                      console.error(error)
+                      return {
+                        [FORM_ERROR]: error.toString(),
+                      }
+                    }
+                  }}
+                />
+              ) : (
+                <div className="text-2xl font-bold">{todo.title}</div>
+              )}
+              <div>
+                <MenuIcon />
+              </div>
+            </div>
+            <div className="my-auto">icon</div>
+            <p className="font-bold text-textSub1">{editDate(todo.updatedAt)}</p>
           </div>
           <button
             type="button"
