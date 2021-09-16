@@ -6,13 +6,17 @@ import { useQuery, useMutation } from "blitz"
 import React, { useState, VFC } from "react"
 import { MenuIcon } from "./MenuIcon"
 
-export const TodoCard: VFC = () => {
+type PROPS = {
+  todo: any
+}
+
+export const TodoCard: VFC<PROPS> = (props) => {
+  const todo = props.todo
   const [isEdit, setIsEdit] = useState<boolean>(false)
-  const [{ todos }, { refetch }] = useQuery(getTodos, { orderBy: { id: "asc" } })
+  const [openModal, setOpenModal] = useState<boolean>(false)
+  const [{}, { refetch }] = useQuery(getTodos, { orderBy: { id: "asc" } })
   const [updateTodoMutation] = useMutation(updateTodo)
   const [deleteTodoMutation] = useMutation(deleteTodo)
-
-  console.log(todos)
 
   const editDate = (date) => {
     const y = date.getFullYear()
@@ -23,49 +27,72 @@ export const TodoCard: VFC = () => {
   }
 
   return (
-    <ul className="w-[400px]">
-      {todos.map((todo) => (
-        <li key={todo.id}>
-          <div className="h-36 p-5 w-full bg-bgMain rounded-lg flex flex-col">
-            <div className="flex items-center justify-between">
-              {isEdit ? (
-                <TodoForm
-                  initialValues={todo}
-                  onSubmit={async (values) => {
-                    try {
-                      await updateTodoMutation(values)
-                      refetch()
-                    } catch (error) {
-                      console.error(error)
-                      return {
-                        [FORM_ERROR]: error.toString(),
-                      }
-                    }
-                  }}
-                />
-              ) : (
-                <div className="text-2xl font-bold">{todo.title}</div>
-              )}
-              <div>
-                <MenuIcon />
-              </div>
-            </div>
-            <div className="my-auto">icon</div>
-            <p className="font-bold text-textSub1">{editDate(todo.updatedAt)}</p>
-          </div>
-          <button
-            type="button"
-            onClick={async () => {
-              if (window.confirm("This will be deleted")) {
-                await deleteTodoMutation({ id: todo.id })
+    <div className="mb-4 relative h-36 p-5 w-full bg-bgMain rounded-lg flex flex-col">
+      <div className="flex items-center justify-between">
+        {isEdit ? (
+          <TodoForm
+            initialValues={todo}
+            onSubmit={async (values) => {
+              try {
+                await updateTodoMutation(values)
                 refetch()
+              } catch (error) {
+                console.error(error)
+                return {
+                  [FORM_ERROR]: error.toString(),
+                }
               }
             }}
-          >
-            Delete
-          </button>
-        </li>
-      ))}
-    </ul>
+          />
+        ) : (
+          <div className="text-2xl font-bold">{todo.title}</div>
+        )}
+        <div>
+          <div className="hover:cursor-pointer" onClick={() => setOpenModal(true)}>
+            <button type="button" aria-expanded="true" aria-haspopup="true">
+              <MenuIcon />
+            </button>
+          </div>
+
+          {openModal ? (
+            <div
+              className="absolute right-0 top-10 p-2 rounded-lg border-borderMain border bg-bgMain"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="menu-button"
+            >
+              <div className="flex flex-col w-44 justify-start" role="none">
+                <div
+                  role="button"
+                  className="text-xs text-textMain font-bold border-b border-borderMain"
+                >
+                  Move To Doing
+                </div>
+                <div
+                  role="button"
+                  className="text-xs text-textMain font-bold mt-2 border-b border-borderMain"
+                >
+                  Edit Task
+                </div>
+                <div
+                  className="text-xs text-accent font-bold mt-2 border-b border-borderMain"
+                  role="button"
+                  onClick={async () => {
+                    if (window.confirm("This will be deleted")) {
+                      await deleteTodoMutation({ id: todo.id })
+                      refetch()
+                    }
+                  }}
+                >
+                  Delete Task
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+      <div className="my-auto">icon</div>
+      <p className="font-bold text-textSub1">{editDate(todo.updatedAt)}</p>
+    </div>
   )
 }
