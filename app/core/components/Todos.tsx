@@ -1,34 +1,26 @@
-import { FORM_ERROR, TodoForm } from "app/todos/components/TodoForm"
 import deleteTodo from "app/todos/mutations/deleteTodo"
 import updateTodo from "app/todos/mutations/updateTodo"
 import getTodos from "app/todos/queries/getTodos"
 import { useQuery, useMutation } from "blitz"
 import React, { useState, VFC } from "react"
-import { MenuIcon } from "./MenuIcon"
 import { TodoCard } from "./TodoCard"
 
-export const Todos: VFC = () => {
-  const [{ todos }] = useQuery(getTodos, { orderBy: { id: "asc" } })
-  const [updateTodoMutation] = useMutation(updateTodo)
-  const [deleteTodoMutation] = useMutation(deleteTodo)
+type Props = {
+  state: string
+}
 
-  console.log(todos)
-
-  const editDate = (date) => {
-    const y = date.getFullYear()
-    const m = date.getMonth()
-    const d = date.getDate()
-
-    return `${y}/${m}/${d}`
-  }
+export const Todos: VFC<Props> = (props) => {
+  const [{ todos }] = useQuery(getTodos, { orderBy: { id: "desc" } })
 
   return (
     <ul className="w-[400px] ">
-      {todos.map((todo) => (
-        <li key={todo.id}>
-          <TodoCard todo={todo} />
-        </li>
-      ))}
+      {todos.map((todo) =>
+        todo.state === props.state.toLowerCase() ? (
+          <li key={todo.id}>
+            <TodoCard todo={todo} />
+          </li>
+        ) : null
+      )}
     </ul>
   )
 }

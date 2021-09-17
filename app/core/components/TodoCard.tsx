@@ -14,7 +14,7 @@ export const TodoCard: VFC<PROPS> = (props) => {
   const todo = props.todo
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [openModal, setOpenModal] = useState<boolean>(false)
-  const [{}, { refetch }] = useQuery(getTodos, { orderBy: { id: "asc" } })
+  const [{}, { refetch }] = useQuery(getTodos, { orderBy: { id: "desc" } })
   const [updateTodoMutation] = useMutation(updateTodo)
   const [deleteTodoMutation] = useMutation(deleteTodo)
 
@@ -26,8 +26,26 @@ export const TodoCard: VFC<PROPS> = (props) => {
     return `${y}/${m}/${d}`
   }
 
+  const updateTodoState = async () => {
+    switch (todo.state) {
+      case "todo":
+        await updateTodoMutation({ ...todo, state: "doing" })
+        refetch()
+        break
+      case "doing":
+        await updateTodoMutation({ ...todo, state: "done" })
+        refetch()
+        break
+      default:
+        break
+    }
+  }
+
   return (
-    <div className="mb-4 relative h-36 p-5 w-full bg-bgMain rounded-lg flex flex-col">
+    <div
+      // onBlur={() => setOpenModal(false)}
+      className=" mb-4 relative h-36 p-5 w-full bg-bgMain rounded-lg flex flex-col"
+    >
       <div className="flex items-center justify-between">
         {isEdit ? (
           <TodoForm
@@ -35,6 +53,7 @@ export const TodoCard: VFC<PROPS> = (props) => {
             onSubmit={async (values) => {
               try {
                 await updateTodoMutation(values)
+                setIsEdit(false)
                 refetch()
               } catch (error) {
                 console.error(error)
@@ -56,24 +75,30 @@ export const TodoCard: VFC<PROPS> = (props) => {
 
           {openModal ? (
             <div
-              className="absolute right-0 top-10 p-2 rounded-lg border-borderMain border bg-bgMain"
+              className="z-10 absolute right-0 top-10 p-2 rounded-lg border-borderMain border bg-bgMain"
               role="menu"
               aria-orientation="vertical"
               aria-labelledby="menu-button"
             >
               <div className="flex flex-col w-44 justify-start" role="none">
-                <div
-                  role="button"
-                  className="text-xs text-textMain font-bold border-b border-borderMain"
-                >
-                  Move To Doing
-                </div>
-                <div
-                  role="button"
-                  className="text-xs text-textMain font-bold mt-2 border-b border-borderMain"
-                >
-                  Edit Task
-                </div>
+                {todo.state !== "done" ? (
+                  <>
+                    <div
+                      onClick={updateTodoState}
+                      role="button"
+                      className="text-xs text-textMain font-bold border-b border-borderMain"
+                    >
+                      Move To {todo.state === "todo" ? "Doing" : "Done"}
+                    </div>
+                    <div
+                      onClick={() => setIsEdit(true)}
+                      role="button"
+                      className="text-xs text-textMain font-bold mt-2 border-b border-borderMain"
+                    >
+                      Edit Task
+                    </div>
+                  </>
+                ) : null}
                 <div
                   className="text-xs text-accent font-bold mt-2 border-b border-borderMain"
                   role="button"
