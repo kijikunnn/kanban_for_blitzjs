@@ -52,7 +52,7 @@ export const TaskCard: VFC<Props> = (props) => {
     <div className=" min-h-full mx-auto bg-bgSub border border-borderMain my-7 rounded-2xl px-5">
       <div className="text-2xl font-bold ml-2 my-5">{props.state}</div>
       {props.state === "Todo" ? <CreateTodo /> : null}
-      <Todos />
+      <Todos state={props.state} />
     </div>
   )
 }

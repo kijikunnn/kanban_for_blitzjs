@@ -5,6 +5,7 @@ import { z } from "zod"
 const UpdateTodo = z.object({
   id: z.number(),
   title: z.string(),
+  state: z.string(),
 })
 
 export default resolver.pipe(resolver.zod(UpdateTodo), async ({ id, ...data }) => {
